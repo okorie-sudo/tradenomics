@@ -7,6 +7,14 @@
   --color-danger: #e63946;
 }
 
+/* Dark theme */
+[data-theme="dark"] {
+  --color-primary: #ffffff;
+  --color-secondary: #000000;
+  --color-accent: #1db954;
+  --color-danger: #e63946;
+}
+
 @theme {
   --color-primary: var(--color-primary);
   --color-secondary: var(--color-secondary);
