@@ -8,7 +8,7 @@ import {
 import Auth from "./pages/Auth";
 import Feed from "./pages/Feed";
 import Leaderboard from "./pages/Leaderboard";
-import Notificatin from "./pages/Notificatin";
+import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
 import Create from "./pages/Create";
 
@@ -16,22 +16,32 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthProvider";
 import BottomNav from "./components/BottomNav";
 import { useAuth } from "./hooks/useAuth";
+import Chat from "./pages/Chat";
+import UserProfile from "./pages/UserProfile";
 
 function App() {
   const { user } = useAuth();
 
-  console.log(user);
   return (
     <AuthProvider>
       <Router>
         <Routes>
           <Route path="/auth" element={!user ? <Auth /> : <Feed />} />
           <Route path="/feed" element={<Feed />} />
+          <Route path="/profile/:id" element={<UserProfile />} />
           <Route
-            path="notifications"
+            path="/messages/:id"
             element={
               <ProtectedRoute>
-                <Notificatin />
+                <Chat />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/messages"
+            element={
+              <ProtectedRoute>
+                <Messages />
               </ProtectedRoute>
             }
           />
