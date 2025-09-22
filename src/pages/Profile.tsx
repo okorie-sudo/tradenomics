@@ -19,7 +19,6 @@ const Profile: React.FC = () => {
   const [activeTab, setActiveTab] = useState<
     "overview" | "trades" | "competitions"
   >("overview");
-  const [isFollowing, setIsFollowing] = useState(true);
 
   // Dummy data
   const profileData = {
@@ -45,7 +44,7 @@ const Profile: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-secondary dark:bg-primary min-h-screen">
+    <div className="flex-1 flex flex-col pb-15 bg-secondary dark:bg-primary min-h-screen">
       {/* Header with Settings + Theme Toggle */}
       <div className="flex justify-end items-center p-4 gap-2">
         <button
@@ -97,7 +96,7 @@ const Profile: React.FC = () => {
           </div>
         </div>
 
-        {/* Follow/Unfollow button */}
+        {/* Follow/Unfollow button
         <button
           onClick={() => setIsFollowing(!isFollowing)}
           className={`w-full py-2 rounded mb-4 ${
@@ -107,7 +106,7 @@ const Profile: React.FC = () => {
           }`}
         >
           {isFollowing ? "Following" : "Follow"}
-        </button>
+        </button> */}
 
         {/* Achievements / Badges */}
         <div className="flex gap-2 justify-center mt-2">

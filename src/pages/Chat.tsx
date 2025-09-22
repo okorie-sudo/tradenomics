@@ -91,13 +91,13 @@ const Chat: React.FC = () => {
                 className={`max-w-xs rounded-2xl px-3 py-2 shadow-md text-sm ${
                   isYou
                     ? "bg-black text-white rounded-br-none"
-                    : "bg-white dark:bg-gray-800 text-primary rounded-bl-none"
+                    : "bg-white dark:bg-gray-800 text-black rounded-bl-none"
                 }`}
               >
                 <p>{msg.content}</p>
                 <span
                   className={`block text-[10px] mt-1 ${
-                    isYou ? "text-gray-300" : "text-primary"
+                    isYou ? "text-gray-300" : "text-black/50"
                   }`}
                 >
                   {formatDate(msg.createdAt)}

@@ -14,10 +14,12 @@ import { formatDate } from "../utils/normalizeDate";
 import { type Post } from "../services/posts";
 import CommentModal from "../components/CommentModal";
 
+type Notification = { id: string; text: string };
+
 const Feed: React.FC = () => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState(dummyPosts);
-  const [notifications] = useState([
+  const [notifications, setNotifications] = useState<Notification[]>([
     { id: "1", text: "Your trade post got 5 new likes" },
     { id: "2", text: "You placed 3rd in April Win Rate Challenge" },
     { id: "3", text: "Alex started following you" },
@@ -148,7 +150,7 @@ const Feed: React.FC = () => {
           value={newPost}
           onChange={(e) => setNewPost(e.target.value)}
           placeholder="What’s on your mind?"
-          className="w-full p-2 rounded-lg border border-secondary/30 text-primary bg-white dark:bg-gray-800 resize-none"
+          className="w-full p-2 rounded-lg border border-secondary/30 text-primary bg-secondary/20 dark:bg-gray-800 resize-none"
           rows={2}
         />
         {imagePreview && (
@@ -260,27 +262,53 @@ const Feed: React.FC = () => {
         onClick={() => setIsOpen(false)}
       >
         <div
-          className={`w-80 h-full bg-white dark:bg-gray-900 shadow-lg p-4 flex flex-col transform transition-transform duration-300 ease-in-out ${
+          className={`w-80 h-full bg-secondary  shadow-lg p-4 flex flex-col transform transition-transform duration-300 ease-in-out ${
             isOpen ? "translate-x-0" : "translate-x-full"
           }`}
           onClick={(e) => e.stopPropagation()}
         >
+          {/* Header */}
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-bold text-primary">Notifications</h2>
-            <button onClick={() => setIsOpen(false)}>
-              <X className="w-5 h-5 text-primary" />
-            </button>
+            <div className="flex gap-2">
+              {notifications.length > 0 && (
+                <button
+                  onClick={() => setNotifications([])}
+                  className="text-xs text-accent hover:underline"
+                >
+                  Clear All
+                </button>
+              )}
+              <button onClick={() => setIsOpen(false)}>
+                <X className="w-5 h-5 text-primary" />
+              </button>
+            </div>
           </div>
 
+          {/* Notifications List */}
           <div className="flex-1 space-y-3 overflow-y-auto">
-            {notifications.map((n) => (
-              <div
-                key={n.id}
-                className="p-3 bg-secondary dark:bg-gray-800 rounded-lg text-primary text-sm animate-fade-in"
-              >
-                {n.text}
-              </div>
-            ))}
+            {notifications.length === 0 ? (
+              <p className="text-sm text-secondary">No new notifications</p>
+            ) : (
+              notifications.map((n) => (
+                <div
+                  key={n.id}
+                  className="relative p-3 bg-secondary dark:bg-gray-800 rounded-lg text-primary text-sm animate-fade-in"
+                >
+                  {n.text}
+                  <button
+                    onClick={() =>
+                      setNotifications((prev) =>
+                        prev.filter((item) => item.id !== n.id)
+                      )
+                    }
+                    className="absolute top-2 right-2 text-xs text-primary hover:text-danger"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>

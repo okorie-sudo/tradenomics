@@ -11,9 +11,9 @@ const Messages: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex-1 flex flex-col bg-secondary dark:bg-primary min-h-screen pb-15">
+    <div className="flex-1 flex flex-col bg-secondary min-h-screen pb-15">
       {/* Header */}
-      <div className="p-4 border-b border-secondary/30 sticky top-0 bg-white dark:bg-gray-900 z-10 shadow-sm">
+      <div className="p-4 border-b border-secondary/30 sticky top-0 bg-secondary  z-10 shadow-sm">
         <h1 className="text-xl font-bold text-primary">Messages</h1>
       </div>
 

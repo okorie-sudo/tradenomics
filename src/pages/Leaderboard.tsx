@@ -42,7 +42,7 @@ const Leaderboard: React.FC = () => {
     <div className="flex-1 flex flex-col bg-secondary dark:bg-primary min-h-screen pb-20">
       {/* Fixed Header */}
       <div
-        className={`sticky top-0 z-20 p-4 bg-white dark:bg-gray-900 transition-shadow ${
+        className={`sticky top-0 z-20 p-4 bg-secondary transition-shadow ${
           scrolled ? "shadow-md" : ""
         }`}
       >
@@ -51,7 +51,7 @@ const Leaderboard: React.FC = () => {
         {/* Filters */}
         <div className="flex justify-between gap-3">
           {/* Metric toggle */}
-          <div className="flex flex-1 gap-1 bg-secondary/20 dark:bg-gray-800 rounded-lg p-1">
+          <div className="flex flex-1 gap-1 bg-secondary/20 dark:bg-accent/50  rounded-lg p-1">
             <button
               onClick={() => setMetric("pnl")}
               className={`flex-1 flex items-center justify-center gap-1 py-1 rounded-md text-sm transition-all duration-200 ${
@@ -137,7 +137,7 @@ const Leaderboard: React.FC = () => {
             <div
               key={trader.id}
               onClick={() => navigate("/profile/1")} // hardcoded for now
-              className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition cursor-pointer"
+              className="flex items-center justify-between p-3 bg-secondary rounded-lg shadow-sm hover:shadow-md transition cursor-pointer"
             >
               <div className="flex items-center gap-3">
                 <span className={`w-6 text-center ${rankStyle}`}>#{rank}</span>
