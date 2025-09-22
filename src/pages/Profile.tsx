@@ -1,6 +1,6 @@
 // src/pages/Profile.tsx
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Check, TrendingUp, Target, Award, Settings } from "lucide-react";
 import {
   LineChart,
@@ -12,15 +12,14 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import ThemeToggle from "../components/ThemeToggle";
-import SettingsModal from "../components/SettingsModal";
 
 const Profile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<
     "overview" | "trades" | "competitions"
   >("overview");
   const [isFollowing, setIsFollowing] = useState(true);
-  const [settingsOpen, setSettingsOpen] = useState(false);
 
   // Dummy data
   const profileData = {
@@ -50,7 +49,7 @@ const Profile: React.FC = () => {
       {/* Header with Settings + Theme Toggle */}
       <div className="flex justify-end items-center p-4 gap-2">
         <button
-          onClick={() => setSettingsOpen(true)}
+          onClick={() => navigate("/settings")}
           className="w-10 h-10 flex items-center justify-center rounded-full
                      bg-secondary dark:bg-primary
                      hover:scale-105 active:scale-95 transition-all duration-200"
@@ -136,7 +135,7 @@ const Profile: React.FC = () => {
         <button
           className={`flex-1 py-3 ${
             activeTab === "trades"
-              ? "border-b-2 border-primary  font-semibold"
+              ? "border-b-2 border-primary font-semibold"
               : ""
           }`}
           onClick={() => setActiveTab("trades")}
@@ -146,7 +145,7 @@ const Profile: React.FC = () => {
         <button
           className={`flex-1 py-3 ${
             activeTab === "competitions"
-              ? "border-b-2 border-primary  font-semibold"
+              ? "border-b-2 border-primary font-semibold"
               : ""
           }`}
           onClick={() => setActiveTab("competitions")}
@@ -243,12 +242,6 @@ const Profile: React.FC = () => {
           </div>
         )}
       </div>
-
-      {/* Settings Modal */}
-      <SettingsModal
-        isOpen={settingsOpen}
-        onClose={() => setSettingsOpen(false)}
-      />
     </div>
   );
 };

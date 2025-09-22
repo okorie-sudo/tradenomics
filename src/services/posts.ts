@@ -17,7 +17,7 @@ import { db } from "./firebase";
 
 // Post type
 export type Post = {
-  id?: string;
+  id: string;
   authorId: string;
   content: string;
   mediaUrl?: string;
@@ -28,6 +28,17 @@ export type Post = {
   likesCount: number;
   commentsCount: number;
   repostsCount: number;
+  isLiked?: boolean;
+  isReposted?: boolean;
+};
+
+//comments type
+export type Comment = {
+  id: string;
+  postId: string; // link back to post
+  authorId: string;
+  content: string;
+  createdAt: string;
 };
 
 // Create a new post

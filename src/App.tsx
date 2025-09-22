@@ -11,6 +11,7 @@ import Leaderboard from "./pages/Leaderboard";
 import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
 import Create from "./pages/Create";
+import Settings from "./pages/Settings";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthProvider";
@@ -29,6 +30,7 @@ function App() {
           <Route path="/auth" element={!user ? <Auth /> : <Feed />} />
           <Route path="/feed" element={<Feed />} />
           <Route path="/profile/:id" element={<UserProfile />} />
+          <Route path="/settings" element={<Settings />} />
           <Route
             path="/messages/:id"
             element={

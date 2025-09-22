@@ -1,33 +1,24 @@
-// src/pages/Messages.tsx
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  dummyConversations,
+  type Conversation,
+} from "../data/dummyConversations";
 import { formatDate } from "../utils/normalizeDate";
-import { getConversations, subscribe } from "../services/conversationStore";
-import type { Conversation } from "../data/dummyConversations";
 
 const Messages: React.FC = () => {
-  const [conversations, setConversations] = useState<Conversation[]>(() =>
-    getConversations()
-  );
+  const [conversations] = useState<Conversation[]>(dummyConversations);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const unsub = subscribe((next) => {
-      // keep UI state with fresh snapshot
-      setConversations(next);
-    });
-    return unsub;
-  }, []);
-
   return (
-    <div className="flex-1 flex flex-col bg-secondary dark:bg-primary min-h-screen pb-20">
+    <div className="flex-1 flex flex-col bg-secondary dark:bg-primary min-h-screen pb-15">
       {/* Header */}
-      <div className="p-4 border-b border-secondary/30">
+      <div className="p-4 border-b border-secondary/30 sticky top-0 bg-white dark:bg-gray-900 z-10 shadow-sm">
         <h1 className="text-xl font-bold text-primary">Messages</h1>
       </div>
 
-      {/* Conversations List (card style) */}
-      <div className="p-4 space-y-3">
+      {/* Conversations List */}
+      <div className="divide-y divide-secondary/20">
         {conversations.map((conv) => {
           const partner =
             conv.participants.find((p) => p !== "you") || "Unknown";
@@ -35,10 +26,18 @@ const Messages: React.FC = () => {
             <button
               key={conv.id}
               onClick={() => navigate(`/messages/${conv.id}`)}
-              className="w-full text-left p-4 rounded-lg bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition flex flex-col"
+              className="w-full text-left p-4 hover:bg-secondary/10 dark:hover:bg-gray-800 transition"
             >
               <div className="flex justify-between items-center mb-1">
-                <span className="font-semibold text-primary">{partner}</span>
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation(); // prevent navigating to chat
+                    navigate("/profile/1"); // hardcoded for now
+                  }}
+                  className="font-semibold text-primary cursor-pointer hover:underline"
+                >
+                  {partner}
+                </span>
                 <span className="text-xs text-primary">
                   {formatDate(conv.lastMessageAt)}
                 </span>

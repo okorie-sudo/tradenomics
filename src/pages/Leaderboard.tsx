@@ -1,9 +1,8 @@
-// src/pages/Leaderboard.tsx
 import React, { useEffect, useState } from "react";
 import { fetchLeaderboard } from "../services/leaderboard";
 import type { Trader } from "../data/dummyLeaderboard";
 import { Check, BarChart3, Clock } from "lucide-react";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 type Metric = "pnl" | "winRate" | "sharpeRatio";
 type TimeRange = "all" | "30d" | "7d";
@@ -13,8 +12,7 @@ const Leaderboard: React.FC = () => {
   const [metric, setMetric] = useState<Metric>("pnl");
   const [timeRange, setTimeRange] = useState<TimeRange>("all");
   const [scrolled, setScrolled] = useState(false);
-
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadData = async () => {
@@ -30,7 +28,6 @@ const Leaderboard: React.FC = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // mock time filtering
   const filtered = traders.map((t) => {
     if (timeRange === "30d")
       return { ...t, pnl: t.pnl * 0.7, winRate: t.winRate * 0.9 };
@@ -139,9 +136,9 @@ const Leaderboard: React.FC = () => {
           return (
             <div
               key={trader.id}
-              className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition"
+              onClick={() => navigate("/profile/1")} // hardcoded for now
+              className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition cursor-pointer"
             >
-              {/* Left */}
               <div className="flex items-center gap-3">
                 <span className={`w-6 text-center ${rankStyle}`}>#{rank}</span>
                 <img
@@ -162,7 +159,6 @@ const Leaderboard: React.FC = () => {
                 </div>
               </div>
 
-              {/* Right: metric value */}
               <div>
                 {metric === "pnl" && (
                   <p

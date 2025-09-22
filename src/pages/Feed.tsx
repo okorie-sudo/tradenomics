@@ -8,10 +8,14 @@ import {
   X,
   Image as ImageIcon,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { dummyPosts } from "../data/dummyPosts";
 import { formatDate } from "../utils/normalizeDate";
+import { type Post } from "../services/posts";
+import CommentModal from "../components/CommentModal";
 
 const Feed: React.FC = () => {
+  const navigate = useNavigate();
   const [posts, setPosts] = useState(dummyPosts);
   const [notifications] = useState([
     { id: "1", text: "Your trade post got 5 new likes" },
@@ -23,6 +27,11 @@ const Feed: React.FC = () => {
   // New Post state
   const [newPost, setNewPost] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  // Comment modal state
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  // Share modal state
+  const [sharePost, setSharePost] = useState<Post | null>(null);
 
   const handlePost = () => {
     if (!newPost.trim()) return;
@@ -37,6 +46,7 @@ const Feed: React.FC = () => {
       likesCount: 0,
       commentsCount: 0,
       repostsCount: 0,
+      isLiked: false,
     };
 
     setPosts([newEntry, ...posts]);
@@ -51,6 +61,45 @@ const Feed: React.FC = () => {
       reader.onloadend = () => setImagePreview(reader.result as string);
       reader.readAsDataURL(file);
     }
+  };
+
+  // Toggle like
+  const toggleLike = (id: string) => {
+    setPosts((prev) =>
+      prev.map((p) =>
+        p.id === id
+          ? {
+              ...p,
+              likesCount: p.isLiked ? p.likesCount - 1 : p.likesCount + 1,
+              isLiked: !p.isLiked,
+            }
+          : p
+      )
+    );
+  };
+
+  //Handle Repost;
+
+  const handleRepost = (postId: string) => {
+    setPosts((prev) =>
+      prev.map((p) =>
+        p.id === postId
+          ? {
+              ...p,
+              isReposted: !p.isReposted,
+              repostsCount: p.isReposted
+                ? p.repostsCount - 1
+                : p.repostsCount + 1,
+            }
+          : p
+      )
+    );
+  };
+
+  //handlePost sharing...
+  const handleShare = (post: Post) => {
+    handleRepost(post.id);
+    setSharePost(post);
   };
 
   // Utility to render content with links clickable
@@ -143,9 +192,12 @@ const Feed: React.FC = () => {
           <div key={post.id} className="p-4 space-y-2">
             {/* Author & Timestamp */}
             <div className="flex justify-between items-center">
-              <span className="font-semibold text-primary">
+              <button
+                onClick={() => navigate("/profile/1")}
+                className="font-semibold text-primary hover:underline"
+              >
                 {post.authorId}
-              </span>
+              </button>
               <span className="text-xs text-secondary">
                 {formatDate(post.createdAt)}
               </span>
@@ -165,15 +217,33 @@ const Feed: React.FC = () => {
 
             {/* Actions */}
             <div className="flex justify-between items-center text-primary text-sm mt-2">
-              <button className="flex-1 flex items-center justify-center gap-1 hover:text-accent transition-colors">
-                <Heart size={16} />
+              <button
+                onClick={() => toggleLike(post.id)}
+                className={`flex-1 flex items-center justify-center gap-1 transition-colors ${
+                  post.isLiked ? "text-accent" : "hover:text-accent"
+                }`}
+              >
+                <Heart
+                  size={16}
+                  fill={post.isLiked ? "currentColor" : "none"}
+                />
                 <span>{post.likesCount}</span>
               </button>
-              <button className="flex-1 flex items-center justify-center gap-1 hover:text-accent transition-colors">
+              <button
+                onClick={() => setSelectedPost(post)}
+                className="flex-1 flex items-center justify-center gap-1 hover:text-accent transition-colors"
+              >
                 <MessageCircle size={16} />
                 <span>{post.commentsCount}</span>
               </button>
-              <button className="flex-1 flex items-center justify-center gap-1 hover:text-accent transition-colors">
+              <button
+                onClick={() => handleShare(post)}
+                className={`flex-1 flex items-center justify-center gap-1 transition-colors ${
+                  post.isReposted
+                    ? "text-accent"
+                    : "text-primary hover:text-accent"
+                }`}
+              >
                 <Repeat2 size={16} />
                 <span>{post.repostsCount}</span>
               </button>
@@ -214,6 +284,72 @@ const Feed: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Comment Modal */}
+      {selectedPost && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-30">
+          <div className="bg-white dark:bg-gray-900 rounded-lg p-4 w-11/12 max-w-md shadow-lg">
+            <div className="flex justify-between items-center mb-2">
+              <h2 className="font-bold text-primary">Comments</h2>
+              <button onClick={() => setSelectedPost(null)}>
+                <X className="w-5 h-5 text-primary" />
+              </button>
+            </div>
+            <p className="text-sm text-primary mb-4">{selectedPost.content}</p>
+
+            {/* Placeholder comments */}
+            <div className="text-primary text-sm mb-4">
+              No comments yet. Be the first!
+            </div>
+          </div>
+        </div>
+      )}
+      <CommentModal post={selectedPost} onClose={() => setSelectedPost(null)} />
+
+      {/* Share Modal */}
+      {sharePost && (
+        <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/50">
+          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg w-96 p-4">
+            {/* Header */}
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="font-semibold text-primary">Share Post</h2>
+              <button
+                onClick={() => setSharePost(null)}
+                className="p-1 hover:bg-secondary/30 rounded-full"
+              >
+                <X className="w-5 h-5 text-primary" />
+              </button>
+            </div>
+
+            {/* Post Preview */}
+            <div className="p-2 border rounded-md border-secondary/30 mb-3">
+              <p className="text-sm text-primary">{sharePost.content}</p>
+              {sharePost.mediaUrl && (
+                <img
+                  src={sharePost.mediaUrl}
+                  alt="shared preview"
+                  className="rounded-lg mt-2 max-h-40 object-cover"
+                />
+              )}
+            </div>
+
+            {/* Caption box */}
+            <textarea
+              placeholder="Add a caption..."
+              className="w-full bg-transparent border border-secondary/30 rounded-md p-2 text-primary text-sm resize-none mb-3"
+              rows={3}
+            />
+
+            {/* Share button */}
+            <button
+              onClick={() => setSharePost(null)}
+              className="w-full bg-primary text-secondary rounded-md py-2 hover:opacity-90"
+            >
+              Share
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
