@@ -1,12 +1,20 @@
-// src/context/authContext.ts
 import { createContext } from "react";
-import type { User } from "firebase/auth";
+import type { Session, User } from "@supabase/supabase-js";
 
-export type AuthContextType = {
+export interface AuthContextType {
   user: User | null;
+  session: Session | null;
   loading: boolean;
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (
+    email: string,
+    password: string,
+    username?: string,
+  ) => Promise<{ user: User | null; session: Session | null }>;
+  signInWithOAuth: (provider: "google", redirectTo: string) => Promise<void>;
   signOut: () => Promise<void>;
-};
+}
 
-// context only — default is null; consumers must check
-export const AuthContext = createContext<AuthContextType | null>(null);
+export const AuthContext = createContext<AuthContextType | undefined>(
+  undefined,
+);

@@ -35,10 +35,13 @@ const Feed: React.FC = () => {
   // Share modal state
   const [sharePost, setSharePost] = useState<Post | null>(null);
 
+  // Expanded posts state
+  const [expandedPosts, setExpandedPosts] = useState<Set<string>>(new Set());
+
   const handlePost = () => {
     if (!newPost.trim()) return;
 
-    const newEntry = {
+    const newEntry: Post = {
       id: String(Date.now()),
       authorId: "You",
       content: newPost,
@@ -80,8 +83,7 @@ const Feed: React.FC = () => {
     );
   };
 
-  //Handle Repost;
-
+  // Handle Repost
   const handleRepost = (postId: string) => {
     setPosts((prev) =>
       prev.map((p) =>
@@ -98,7 +100,7 @@ const Feed: React.FC = () => {
     );
   };
 
-  //handlePost sharing...
+  // Handle Post sharing
   const handleShare = (post: Post) => {
     handleRepost(post.id);
     setSharePost(post);
@@ -126,6 +128,44 @@ const Feed: React.FC = () => {
       return part;
     });
   }
+
+  // Limit content with View More/Less
+  const getDisplayContent = (post: Post) => {
+    const isExpanded = expandedPosts.has(post.id);
+    if (post.content.length <= 100) {
+      return <>{renderContent(post.content)}</>;
+    }
+    if (isExpanded) {
+      return (
+        <>
+          {renderContent(post.content)}{" "}
+          <button
+            onClick={() =>
+              setExpandedPosts((prev) => {
+                const next = new Set(prev);
+                next.delete(post.id);
+                return next;
+              })
+            }
+            className="text-accent text-sm ml-1"
+          >
+            View Less
+          </button>
+        </>
+      );
+    }
+    return (
+      <>
+        {renderContent(post.content.slice(0, 100))}...
+        <button
+          onClick={() => setExpandedPosts((prev) => new Set(prev).add(post.id))}
+          className="text-accent text-sm ml-1"
+        >
+          View More
+        </button>
+      </>
+    );
+  };
 
   return (
     <div className="flex-1 flex flex-col bg-secondary dark:bg-primary min-h-screen pb-15">
@@ -206,7 +246,7 @@ const Feed: React.FC = () => {
             </div>
 
             {/* Content */}
-            <p className="text-primary">{renderContent(post.content)}</p>
+            <p className="text-primary">{getDisplayContent(post)}</p>
 
             {/* Media (if exists) */}
             {post.mediaUrl && (
@@ -262,7 +302,7 @@ const Feed: React.FC = () => {
         onClick={() => setIsOpen(false)}
       >
         <div
-          className={`w-80 h-full bg-secondary  shadow-lg p-4 flex flex-col transform transition-transform duration-300 ease-in-out ${
+          className={`w-80 h-full bg-secondary shadow-lg p-4 flex flex-col transform transition-transform duration-300 ease-in-out ${
             isOpen ? "translate-x-0" : "translate-x-full"
           }`}
           onClick={(e) => e.stopPropagation()}
@@ -314,24 +354,6 @@ const Feed: React.FC = () => {
       </div>
 
       {/* Comment Modal */}
-      {selectedPost && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-30">
-          <div className="bg-white dark:bg-gray-900 rounded-lg p-4 w-11/12 max-w-md shadow-lg">
-            <div className="flex justify-between items-center mb-2">
-              <h2 className="font-bold text-primary">Comments</h2>
-              <button onClick={() => setSelectedPost(null)}>
-                <X className="w-5 h-5 text-primary" />
-              </button>
-            </div>
-            <p className="text-sm text-primary mb-4">{selectedPost.content}</p>
-
-            {/* Placeholder comments */}
-            <div className="text-primary text-sm mb-4">
-              No comments yet. Be the first!
-            </div>
-          </div>
-        </div>
-      )}
       <CommentModal post={selectedPost} onClose={() => setSelectedPost(null)} />
 
       {/* Share Modal */}
