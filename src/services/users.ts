@@ -1,5 +1,25 @@
 // src/services/users.ts
-import { dummyUsers, type User } from "../data/dummyUsers";
+import { dummyUsers } from "../data/dummyUsers";
+
+export type User = {
+  id: string;
+  name: string;
+  username?: string;
+  bio?: string;
+  avatarUrl?: string;
+  isVerified?: boolean;
+  createAt?: Date;
+  lastLogin?: Date;
+  pnl?: number;
+  winRate?: number;
+  sharpeRatio?: number;
+  equityCurveData?: { date: string; value: number }[];
+  followers?: number;
+  following?: number;
+  email?: string;
+  provider?: string;
+  updatedAt?: Date;
+};
 
 export const fetchAllUsers = async (): Promise<User[]> => {
   return dummyUsers;

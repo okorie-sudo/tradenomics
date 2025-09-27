@@ -2,16 +2,16 @@
 export type User = {
   id: string;
   name: string;
-  handle: string;
-  bio: string;
-  avatarUrl: string;
-  isVerified: boolean;
-  pnl: number;
-  winRate: number;
-  sharpeRatio: number;
-  equityCurveData: { date: string; value: number }[];
-  followers: number;
-  following: number;
+  handle?: string;
+  bio?: string;
+  avatarUrl?: string;
+  isVerified?: boolean;
+  pnl?: number;
+  winRate?: number;
+  sharpeRatio?: number;
+  equityCurveData?: { date: string; value: number }[];
+  followers?: number;
+  following?: number;
 };
 
 export const dummyUsers: User[] = [
@@ -19,7 +19,8 @@ export const dummyUsers: User[] = [
     id: "1",
     name: "Alex 'The Algo' Turner",
     handle: "@TheAlgoTrader",
-    bio: "Quant analyst and prop trader. Specializing in high-frequency algorithmic strategies. Sharing insights and performance.",
+    bio:
+      "Quant analyst and prop trader. Specializing in high-frequency algorithmic strategies. Sharing insights and performance.",
     avatarUrl:
       "https://images.unsplash.com/photo-1758205763784-403107e86826?q=80&w=1170&auto=format&fit=crop",
     isVerified: true,
@@ -40,7 +41,8 @@ export const dummyUsers: User[] = [
     id: "2",
     name: "Sophia Quant",
     handle: "@SQTrades",
-    bio: "Options trader focusing on volatility strategies. Sharing charts & alpha.",
+    bio:
+      "Options trader focusing on volatility strategies. Sharing charts & alpha.",
     avatarUrl:
       "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1170&auto=format&fit=crop",
     isVerified: false,

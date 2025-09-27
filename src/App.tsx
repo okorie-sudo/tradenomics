@@ -32,7 +32,7 @@ function App() {
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/feed" element={<Feed />} />
         <Route path="/profile/:id" element={<UserProfile />} />
-        <Route path="/settings" element={<Settings />} />
+        <Route path="/settings" element={user ? <Settings /> : <Auth />} />
         <Route
           path="/messages/:id"
           element={

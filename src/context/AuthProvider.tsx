@@ -1,3 +1,4 @@
+// src/context/AuthProvider.ts
 import { type ReactNode, useEffect, useState } from "react";
 import { supabase } from "../services/supabase";
 import { AuthContext, type AuthContextType } from "./authContext";
@@ -9,22 +10,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-
+    const initAuth = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      if (!error) {
+        setSession(data.session);
+        setUser(data.session?.user ?? null);
+      }
       setLoading(false);
-    });
+    };
+    initAuth();
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
+      }
+    );
 
-    return () => subscription.unsubscribe();
+    return () => {
+      listener.subscription.unsubscribe();
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {
@@ -32,7 +38,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       email,
       password,
     });
-    if (error) throw error;
+    if (error) throw new Error(error.message);
   };
 
   const signUp = async (email: string, password: string, username?: string) => {
@@ -41,7 +47,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       password,
       options: { data: { username: username || email.split("@")[0] } },
     });
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     return { user: data.user, session: data.session };
   };
 
@@ -50,12 +56,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       provider,
       options: { redirectTo },
     });
-    if (error) throw error;
+    if (error) throw new Error(error.message);
   };
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    if (error) throw new Error(error.message);
   };
 
   const value: AuthContextType = {
